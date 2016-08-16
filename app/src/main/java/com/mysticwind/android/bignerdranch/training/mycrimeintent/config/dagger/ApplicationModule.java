@@ -19,12 +19,7 @@ public class ApplicationModule {
     @Singleton
     public List<CrimeRecord> provideCrimeRecords() {
         List<CrimeRecord> crimeRecordList = new ArrayList<>();
-        for (int index = 0; index < 100; index++) {
-            CrimeRecord crime = new CrimeRecord();
-            crime.setTitle("Crime #" + index);
-            crime.setSolved(index % 2 == 0);
-            crimeRecordList.add(crime);
-        }
+        // we are now capable of create crime records.
         return crimeRecordList;
     }
 

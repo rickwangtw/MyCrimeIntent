@@ -25,4 +25,8 @@ public class CrimeLab {
         }
         return null;
     }
+
+    public void addCrimeRecord(CrimeRecord crimeRecord) {
+        crimeRecordList.add(crimeRecord);
+    }
 }
