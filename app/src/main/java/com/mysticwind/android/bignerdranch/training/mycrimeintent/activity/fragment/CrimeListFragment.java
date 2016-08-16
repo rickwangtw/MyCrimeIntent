@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.CrimeActivity;
@@ -103,8 +102,19 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        updateUi();
+    }
+
     private void updateUi() {
-        crimeAdapter = new CrimeAdapter(crimeLab.getCrimeRecordList());
+        if (crimeAdapter == null) {
+            crimeAdapter = new CrimeAdapter(crimeLab.getCrimeRecordList());
+        } else {
+            crimeAdapter.notifyDataSetChanged();
+        }
         crimeRecyclerView.setAdapter(crimeAdapter);
     }
 }
