@@ -23,6 +23,7 @@ import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeL
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -32,6 +33,7 @@ public class CrimeFragment extends Fragment {
     private static final String CRIME_ID_KEY = "crimeId";
     private static final String CRIME_ID_EXTRA_KEY = "crimeId";
     private static final String DATE_PICKER_DIALOG_TAG = "datePickerDialog";
+    public static final int REQUEST_DATE_CODE = 0xFF01;
 
     @Inject
     CrimeLab crimeLab;
@@ -49,6 +51,29 @@ public class CrimeFragment extends Fragment {
         CrimeFragment fragment = new CrimeFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode != REQUEST_DATE_CODE) {
+            return;
+        }
+
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        Date date = DatePickerDialogFragment.extractDate(data);
+        crimeRecord.updateDateTime(date);
+        updateDate(date);
+    }
+
+    private void updateDate(Date date) {
+        // Wednesday, Jul 22, 2015
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, MMM dd, yyyy");
+        dateButton.setText(simpleDateFormat.format(date));
     }
 
     @Nullable
@@ -84,14 +109,13 @@ public class CrimeFragment extends Fragment {
         });
 
         dateButton = (Button) view.findViewById(R.id.crime_date);
-        // Wednesday, Jul 22, 2015
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, MMM dd, yyyy");
-        dateButton.setText(simpleDateFormat.format(crimeRecord.getDateTime()));
+        updateDate(crimeRecord.getDateTime());
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
-                DatePickerDialogFragment dialog = new DatePickerDialogFragment();
+                DatePickerDialogFragment dialog = DatePickerDialogFragment.newInstance(crimeRecord.getDateTime());
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE_CODE);
                 dialog.show(manager, DATE_PICKER_DIALOG_TAG);
             } });
 

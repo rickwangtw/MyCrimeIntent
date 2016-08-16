@@ -8,7 +8,7 @@ public class CrimeRecord {
     private final UUID id;
     private String title;
     // TODO use Joda or JSR-310
-    private final Date dateTime;
+    private Date dateTime;
     private boolean solved;
 
     public CrimeRecord() {
@@ -44,5 +44,9 @@ public class CrimeRecord {
 
     public void setSolved(boolean solved) {
         this.solved = solved;
+    }
+
+    public void updateDateTime(Date date) {
+        this.dateTime = date;
     }
 }
