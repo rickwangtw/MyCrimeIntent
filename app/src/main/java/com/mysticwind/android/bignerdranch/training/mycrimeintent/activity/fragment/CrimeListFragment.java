@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
@@ -19,7 +20,8 @@ import java.util.List;
 
 public class CrimeListFragment extends Fragment {
 
-    private class CrimeHolder extends RecyclerView.ViewHolder {
+    private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+        private CrimeRecord crimeRecord;
         private final TextView titleTextView;
         private final TextView dateTextView;
         private final CheckBox solvedCheckBox;
@@ -29,12 +31,20 @@ public class CrimeListFragment extends Fragment {
             titleTextView = (TextView) itemView.findViewById(R.id.list_item_crime_title_text_view);
             dateTextView = (TextView) itemView.findViewById(R.id.list_item_crime_date_text_view);
             solvedCheckBox = (CheckBox) itemView.findViewById(R.id.list_item_crime_solved_check_box);
+            itemView.setOnClickListener(this);
         }
 
         public void bindCrime(CrimeRecord crime) {
+            crimeRecord = crime;
             titleTextView.setText(crime.getTitle());
             dateTextView.setText(crime.getDateTime().toString());
             solvedCheckBox.setChecked(crime.isSolved());
+        }
+
+        @Override
+        public void onClick(View view) {
+            Toast.makeText(getActivity(), crimeRecord.getTitle() + " clicked!", Toast.LENGTH_SHORT)
+                    .show();
         }
     }
 
