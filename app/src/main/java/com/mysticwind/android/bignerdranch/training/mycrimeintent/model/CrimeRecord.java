@@ -1,7 +1,5 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.model;
 
-import org.threeten.bp.LocalDateTime;
-
 import java.util.Date;
 import java.util.UUID;
 
