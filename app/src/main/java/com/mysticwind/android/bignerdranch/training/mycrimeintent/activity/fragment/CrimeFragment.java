@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,8 @@ import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRec
 
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.FormatStyle;
+
+import java.text.SimpleDateFormat;
 
 public class CrimeFragment extends Fragment {
 
@@ -55,7 +58,9 @@ public class CrimeFragment extends Fragment {
         });
 
         dateButton = (Button) view.findViewById(R.id.crime_date);
-        dateButton.setText(crimeRecord.getDateTime().toString());
+        // Wednesday, Jul 22, 2015
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, MMM dd, yyyy");
+        dateButton.setText(simpleDateFormat.format(crimeRecord.getDateTime()));
         dateButton.setEnabled(false);
 
         checkBox = (CheckBox) view.findViewById(R.id.crime_solved);
