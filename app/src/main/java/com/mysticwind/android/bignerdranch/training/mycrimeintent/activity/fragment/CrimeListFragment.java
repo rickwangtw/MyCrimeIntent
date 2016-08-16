@@ -29,6 +29,7 @@ import javax.inject.Inject;
 
 public class CrimeListFragment extends Fragment {
 
+    private static final String IS_SUBTITLE_VISIBLE_KEY = "isSubtitleVisible";
     private static final int VIEW_CRIME_RECORD_REQUEST_CODE = 0xFF00;
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -130,6 +131,10 @@ public class CrimeListFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
+
+        if (savedInstanceState != null) {
+            subtitleVisible = savedInstanceState.getBoolean(IS_SUBTITLE_VISIBLE_KEY);
+        }
     }
 
     @Nullable
@@ -148,6 +153,13 @@ public class CrimeListFragment extends Fragment {
         updateUi();
 
         return view;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putBoolean(IS_SUBTITLE_VISIBLE_KEY, subtitleVisible);
     }
 
     @Override
