@@ -2,19 +2,25 @@ package com.mysticwind.android.bignerdranch.training.mycrimeintent.model;
 
 import org.threeten.bp.LocalDateTime;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class CrimeRecord {
 
     private final UUID id;
     private String title;
-    private final LocalDateTime dateTime;
+    // TODO use Joda or JSR-310
+    private final Date dateTime;
     private boolean solved;
+
+    public CrimeRecord() {
+        this(null);
+    }
 
     public CrimeRecord(String title) {
         this.id = UUID.randomUUID();
         this.title = title;
-        this.dateTime = LocalDateTime.now();
+        this.dateTime = new Date();
         this.solved = false;
     }
 
@@ -30,7 +36,7 @@ public class CrimeRecord {
         this.title = title;
     }
 
-    public LocalDateTime getDateTime() {
+    public Date getDateTime() {
         return dateTime;
     }
 
