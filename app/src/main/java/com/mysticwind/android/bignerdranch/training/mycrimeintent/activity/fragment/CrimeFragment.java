@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.dialog.DatePickerDialogFragment;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.CrimeIntentApplication;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
@@ -29,6 +31,7 @@ public class CrimeFragment extends Fragment {
 
     private static final String CRIME_ID_KEY = "crimeId";
     private static final String CRIME_ID_EXTRA_KEY = "crimeId";
+    private static final String DATE_PICKER_DIALOG_TAG = "datePickerDialog";
 
     @Inject
     CrimeLab crimeLab;
@@ -84,7 +87,13 @@ public class CrimeFragment extends Fragment {
         // Wednesday, Jul 22, 2015
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, MMM dd, yyyy");
         dateButton.setText(simpleDateFormat.format(crimeRecord.getDateTime()));
-        dateButton.setEnabled(false);
+        dateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager manager = getFragmentManager();
+                DatePickerDialogFragment dialog = new DatePickerDialogFragment();
+                dialog.show(manager, DATE_PICKER_DIALOG_TAG);
+            } });
 
         checkBox = (CheckBox) view.findViewById(R.id.crime_solved);
         checkBox.setChecked(crimeRecord.isSolved());
