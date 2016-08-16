@@ -1,5 +1,7 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -27,6 +29,7 @@ import javax.inject.Inject;
 public class CrimeFragment extends Fragment {
 
     private static final String CRIME_ID_KEY = "crimeId";
+    private static final String CRIME_ID_EXTRA_KEY = "crimeId";
 
     @Inject
     CrimeLab crimeLab;
@@ -70,6 +73,7 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
                 crimeRecord.setTitle(charSequence.toString());
+                setCrimeChanged();
             }
 
             @Override
@@ -89,9 +93,20 @@ public class CrimeFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 crimeRecord.setSolved(isChecked);
+                setCrimeChanged();
             }
         });
 
         return view;
+    }
+
+    private void setCrimeChanged() {
+        Intent data = new Intent();
+        data.putExtra(CRIME_ID_EXTRA_KEY, crimeRecord.getId());
+        getActivity().setResult(Activity.RESULT_OK, data);
+    }
+
+    public static UUID extractCrimeId(Intent data) {
+        return (UUID) data.getSerializableExtra(CRIME_ID_EXTRA_KEY);
     }
 }

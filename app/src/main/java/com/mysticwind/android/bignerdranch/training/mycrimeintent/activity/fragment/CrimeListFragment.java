@@ -1,5 +1,6 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,10 +20,13 @@ import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeL
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.inject.Inject;
 
 public class CrimeListFragment extends Fragment {
+
+    private static final int VIEW_CRIME_RECORD_REQUEST_CODE = 0xFF00;
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private CrimeRecord crimeRecord;
@@ -48,7 +52,7 @@ public class CrimeListFragment extends Fragment {
         @Override
         public void onClick(View view) {
             Intent intent = CrimeActivity.newLaunchIntent(getActivity(), crimeRecord.getId());
-            startActivity(intent);
+            startActivityForResult(intent, VIEW_CRIME_RECORD_REQUEST_CODE);
         }
     }
 
@@ -76,6 +80,23 @@ public class CrimeListFragment extends Fragment {
         public int getItemCount() {
             return crimeRecords.size();
         }
+
+        public void notifyCrimeChanged(UUID crimeId) {
+            int index = getIndexOfCrimeId(crimeId);
+            if (index < 0) {
+                return;
+            }
+            notifyItemChanged(index);
+        }
+
+        private int getIndexOfCrimeId(UUID crimeId) {
+            for (int index = 0 ; index < crimeRecords.size() ; ++index) {
+                if (crimeRecords.get(index).getId().equals(crimeId)) {
+                    return index;
+                }
+            }
+            return -1;
+        }
     }
 
     @Inject
@@ -83,6 +104,22 @@ public class CrimeListFragment extends Fragment {
 
     private RecyclerView crimeRecyclerView;
     private CrimeAdapter crimeAdapter;
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode != VIEW_CRIME_RECORD_REQUEST_CODE) {
+            return;
+        }
+
+        if (resultCode != Activity.RESULT_OK) {
+            return;
+        }
+
+        UUID crimeId = CrimeFragment.extractCrimeId(data);
+        crimeAdapter.notifyCrimeChanged(crimeId);
+    }
 
     @Nullable
     @Override
@@ -100,13 +137,6 @@ public class CrimeListFragment extends Fragment {
         updateUi();
 
         return view;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        updateUi();
     }
 
     private void updateUi() {
