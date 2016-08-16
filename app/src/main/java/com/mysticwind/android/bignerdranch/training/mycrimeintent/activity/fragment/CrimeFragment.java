@@ -26,6 +26,8 @@ import javax.inject.Inject;
 
 public class CrimeFragment extends Fragment {
 
+    private static final String CRIME_ID_KEY = "crimeId";
+
     @Inject
     CrimeLab crimeLab;
 
@@ -34,6 +36,15 @@ public class CrimeFragment extends Fragment {
     private CheckBox checkBox;
 
     private CrimeRecord crimeRecord;
+
+    public static CrimeFragment newInstance(UUID crimeId) {
+        Bundle args = new Bundle();
+        args.putSerializable(CRIME_ID_KEY, crimeId);
+
+        CrimeFragment fragment = new CrimeFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -46,7 +57,7 @@ public class CrimeFragment extends Fragment {
 
         CrimeIntentApplication.component(getActivity()).inject(this);
 
-        UUID crimeId = (UUID) getActivity().getIntent().getSerializableExtra(CrimeActivity.CRIME_ID_EXTRA_KEY);
+        UUID crimeId = (UUID) getArguments().getSerializable(CRIME_ID_KEY);
         crimeRecord = crimeLab.getCrimeRecord(crimeId);
 
         crimeTitleEditText = (EditText) view.findViewById(R.id.crime_title);
