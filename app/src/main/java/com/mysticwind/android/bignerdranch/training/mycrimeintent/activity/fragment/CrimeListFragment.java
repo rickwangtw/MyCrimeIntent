@@ -1,5 +1,6 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.CrimeActivity;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.CrimeIntentApplication;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
@@ -46,8 +48,8 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Toast.makeText(getActivity(), crimeRecord.getTitle() + " clicked!", Toast.LENGTH_SHORT)
-                    .show();
+            Intent intent = CrimeActivity.newLaunchIntent(getActivity(), crimeRecord.getId());
+            startActivity(intent);
         }
     }
 

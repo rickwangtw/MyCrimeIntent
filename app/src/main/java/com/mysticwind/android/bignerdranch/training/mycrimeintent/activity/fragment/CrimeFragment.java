@@ -14,11 +14,20 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.CrimeActivity;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.CrimeIntentApplication;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 
 import java.text.SimpleDateFormat;
+import java.util.UUID;
+
+import javax.inject.Inject;
 
 public class CrimeFragment extends Fragment {
+
+    @Inject
+    CrimeLab crimeLab;
 
     private EditText crimeTitleEditText;
     private Button dateButton;
@@ -35,9 +44,13 @@ public class CrimeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_crime, container, false);
 
-        crimeRecord = new CrimeRecord();
+        CrimeIntentApplication.component(getActivity()).inject(this);
+
+        UUID crimeId = (UUID) getActivity().getIntent().getSerializableExtra(CrimeActivity.CRIME_ID_EXTRA_KEY);
+        crimeRecord = crimeLab.getCrimeRecord(crimeId);
 
         crimeTitleEditText = (EditText) view.findViewById(R.id.crime_title);
+        crimeTitleEditText.setText(crimeRecord.getTitle());
         crimeTitleEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
@@ -60,6 +73,7 @@ public class CrimeFragment extends Fragment {
         dateButton.setEnabled(false);
 
         checkBox = (CheckBox) view.findViewById(R.id.crime_solved);
+        checkBox.setChecked(crimeRecord.isSolved());
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
