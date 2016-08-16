@@ -1,5 +1,6 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.model;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
@@ -48,5 +49,15 @@ public class CrimeRecord {
 
     public void updateDateTime(Date date) {
         this.dateTime = date;
+    }
+
+    public void updateDateTime(Time time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(this.dateTime);
+        calendar.set(Calendar.HOUR_OF_DAY, time.getHour());
+        calendar.set(Calendar.MINUTE, time.getMinute());
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        this.dateTime = calendar.getTime();
     }
 }
