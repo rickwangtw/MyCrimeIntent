@@ -13,10 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.CrimeIntentApplication;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 
 import java.util.List;
+
+import javax.inject.Inject;
 
 public class CrimeListFragment extends Fragment {
 
@@ -74,6 +77,9 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
+    @Inject
+    public CrimeLab crimeLab;
+
     private RecyclerView crimeRecyclerView;
     private CrimeAdapter crimeAdapter;
 
@@ -83,6 +89,8 @@ public class CrimeListFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
+
+        CrimeIntentApplication.component(this.getActivity()).inject(this);
 
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         crimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
@@ -94,7 +102,6 @@ public class CrimeListFragment extends Fragment {
     }
 
     private void updateUi() {
-        CrimeLab crimeLab = CrimeLab.INSTANCE;
         crimeAdapter = new CrimeAdapter(crimeLab.getCrimeRecordList());
         crimeRecyclerView.setAdapter(crimeAdapter);
     }
