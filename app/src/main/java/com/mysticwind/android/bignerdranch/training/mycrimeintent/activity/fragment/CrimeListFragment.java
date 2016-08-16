@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -106,6 +107,7 @@ public class CrimeListFragment extends Fragment {
 
     private RecyclerView crimeRecyclerView;
     private CrimeAdapter crimeAdapter;
+    private boolean subtitleVisible = false;
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -153,6 +155,13 @@ public class CrimeListFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
 
         inflater.inflate(R.menu.fragment_crime_list, menu);
+
+        MenuItem subtitleItem = menu.findItem(R.id.menu_item_show_subtitle);
+        if (subtitleVisible) {
+            subtitleItem.setTitle(R.string.hide_subtitle);
+        } else {
+            subtitleItem.setTitle(R.string.show_subtitle);
+        }
     }
 
     @Override
@@ -164,6 +173,11 @@ public class CrimeListFragment extends Fragment {
                 updateUi();
                 Intent intent = CrimePagerActivity.newLaunchIntent(getActivity(), crimeRecord.getId());
                 startActivity(intent);
+                return true;
+            case R.id.menu_item_show_subtitle:
+                subtitleVisible = !subtitleVisible;
+                getActivity().invalidateOptionsMenu();
+                updateSubtitle();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -177,5 +191,17 @@ public class CrimeListFragment extends Fragment {
             crimeAdapter.notifyDataSetChanged();
         }
         crimeRecyclerView.setAdapter(crimeAdapter);
+    }
+
+    private void updateSubtitle() {
+        String subtitle;
+        if (!subtitleVisible) {
+            subtitle = null;
+        } else {
+            int crimeCount = crimeLab.getCrimeRecordList().size();
+            subtitle = getString(R.string.subtitle_format, crimeCount);
+        }
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subtitle);
     }
 }
