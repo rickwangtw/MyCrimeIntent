@@ -14,7 +14,6 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
-import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.CrimeActivity;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.CrimeIntentApplication;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
@@ -51,7 +50,7 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Intent intent = CrimeActivity.newLaunchIntent(getActivity(), crimeRecord.getId());
+            Intent intent = CrimePagerActivity.newLaunchIntent(getActivity(), crimeRecord.getId());
             startActivityForResult(intent, VIEW_CRIME_RECORD_REQUEST_CODE);
         }
     }

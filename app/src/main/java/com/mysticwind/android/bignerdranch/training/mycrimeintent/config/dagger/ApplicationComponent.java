@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.CrimeFragment;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.CrimeListFragment;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.CrimePagerActivity;
 
 import javax.inject.Singleton;
 
@@ -17,4 +18,6 @@ public interface ApplicationComponent {
     void inject(CrimeListFragment crimeListFragment);
 
     void inject(CrimeFragment crimeFragment);
+
+    void inject(CrimePagerActivity crimePagerActivity);
 }

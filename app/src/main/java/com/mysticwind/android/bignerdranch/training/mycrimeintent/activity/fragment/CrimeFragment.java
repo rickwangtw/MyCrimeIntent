@@ -16,7 +16,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
-import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.CrimeActivity;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.CrimeIntentApplication;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
