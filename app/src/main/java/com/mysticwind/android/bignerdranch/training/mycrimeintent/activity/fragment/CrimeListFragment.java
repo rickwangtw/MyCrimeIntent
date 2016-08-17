@@ -1,6 +1,7 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -29,6 +31,12 @@ import java.util.UUID;
 import javax.inject.Inject;
 
 public class CrimeListFragment extends Fragment {
+
+    private static final String TAG =  CrimeListFragment.class.getSimpleName();
+
+    public interface Callbacks {
+        void onCrimeSelected(UUID crimeId);
+    }
 
     private static final String IS_SUBTITLE_VISIBLE_KEY = "isSubtitleVisible";
     private static final int VIEW_CRIME_RECORD_REQUEST_CODE = 0xFF00;
@@ -56,8 +64,7 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            Intent intent = CrimePagerActivity.newLaunchIntent(getActivity(), crimeRecord.getId());
-            startActivityForResult(intent, VIEW_CRIME_RECORD_REQUEST_CODE);
+            callbacks.onCrimeSelected(crimeRecord.getId());
         }
     }
 
@@ -116,6 +123,8 @@ public class CrimeListFragment extends Fragment {
     private CrimeAdapter crimeAdapter;
     private boolean subtitleVisible = false;
 
+    private Callbacks callbacks;
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -130,6 +139,17 @@ public class CrimeListFragment extends Fragment {
 
         UUID crimeId = CrimeFragment.extractCrimeId(data);
         crimeAdapter.notifyCrimeChanged(crimeId);
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Callbacks) {
+            callbacks = (Callbacks) context;
+        } else {
+            Log.d(TAG, "context is not instance of Callbacks: " + context.getClass().getSimpleName());
+        }
     }
 
     @Override
@@ -178,6 +198,13 @@ public class CrimeListFragment extends Fragment {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+
+        callbacks = null;
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
 
@@ -198,8 +225,7 @@ public class CrimeListFragment extends Fragment {
                 CrimeRecord crimeRecord = new CrimeRecord();
                 crimeLab.addCrimeRecord(crimeRecord);
                 updateUi();
-                Intent intent = CrimePagerActivity.newLaunchIntent(getActivity(), crimeRecord.getId());
-                startActivity(intent);
+                callbacks.onCrimeSelected(crimeRecord.getId());
                 return true;
             case R.id.menu_item_show_subtitle:
                 subtitleVisible = !subtitleVisible;
