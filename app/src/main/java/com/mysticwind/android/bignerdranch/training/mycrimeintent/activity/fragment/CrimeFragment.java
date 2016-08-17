@@ -2,6 +2,7 @@ package com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.frag
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -192,7 +193,6 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-
         suspectButton = (Button) view.findViewById(R.id.crime_suspect_button);
         if (crimeRecord.getSuspect() != null) {
             suspectButton.setText(crimeRecord.getSuspect());
@@ -203,6 +203,11 @@ public class CrimeFragment extends Fragment {
                 startActivityForResult(PICK_CONTACT_INTENT, REQUEST_CONTACT_CODE);
             }
         });
+
+        PackageManager packageManager = getActivity().getPackageManager();
+        if (packageManager.resolveActivity(PICK_CONTACT_INTENT, PackageManager.MATCH_DEFAULT_ONLY) == null) {
+            suspectButton.setEnabled(false);
+        }
 
         reportButton = (Button) view.findViewById(R.id.crime_report_button);
         reportButton.setOnClickListener(new View.OnClickListener() {
