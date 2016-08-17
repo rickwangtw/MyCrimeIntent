@@ -184,7 +184,7 @@ public class CrimeFragment extends Fragment {
 
     private void updateTime(Date dateTime) {
         timeButton.setText(
-                String.format("%d:%d",
+                String.format("%02d:%02d",
                         dateTime.getHours(),
                         dateTime.getMinutes()));
     }
