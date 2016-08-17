@@ -1,45 +1,33 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.manager;
 
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.dao.CrimeRecordDao;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 
-import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
+// TODO add update crime record API and not rely on model changes
 public class CrimeLab {
 
-    private final List<CrimeRecord> crimeRecordList;
+    private final CrimeRecordDao crimeRecordDao;
 
-    public CrimeLab(List<CrimeRecord> crimeRecords) {
-        this.crimeRecordList = crimeRecords;
+    public CrimeLab(CrimeRecordDao crimeRecordDao) {
+        this.crimeRecordDao = crimeRecordDao;
     }
 
     public List<CrimeRecord> getCrimeRecordList() {
-        return crimeRecordList;
+        return crimeRecordDao.getCrimeRecords();
     }
 
     public CrimeRecord getCrimeRecord(UUID id) {
-        for (CrimeRecord crimeRecord : crimeRecordList) {
-            if (crimeRecord.getId().equals(id)) {
-                return crimeRecord;
-            }
-        }
-        return null;
+        return crimeRecordDao.getCrimeRecord(id);
     }
 
     public void addCrimeRecord(CrimeRecord crimeRecord) {
-        crimeRecordList.add(crimeRecord);
+        crimeRecordDao.addCrimeRecord(crimeRecord);
     }
 
     public void deleteCrimeRecord(UUID id) {
-        Iterator<CrimeRecord> crimeRecordIterator = crimeRecordList.iterator();
-
-        while (crimeRecordIterator.hasNext()) {
-            CrimeRecord crimeRecord = crimeRecordIterator.next();
-            if (crimeRecord.getId().equals(id)) {
-                crimeRecordIterator.remove();
-                return;
-            }
-        }
+        crimeRecordDao.deleteCrimeRecord(id);
     }
 }
