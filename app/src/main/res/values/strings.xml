@@ -19,4 +19,5 @@
     <string name="show_subtitle">Show Subtitle</string>
     <string name="hide_subtitle">Hide Subtitle</string>
     <string name="delete_crime">Delete Crime</string>
+    <string name="noCrimeMessage">There are no crimes</string>
 </resources>

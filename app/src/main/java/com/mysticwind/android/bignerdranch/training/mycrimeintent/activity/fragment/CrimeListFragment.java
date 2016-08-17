@@ -108,6 +108,7 @@ public class CrimeListFragment extends Fragment {
     public CrimeLab crimeLab;
 
     private RecyclerView crimeRecyclerView;
+    private TextView noCrimeTextView;
     private CrimeAdapter crimeAdapter;
     private boolean subtitleVisible = false;
 
@@ -150,6 +151,8 @@ public class CrimeListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_crime_list, container, false);
         crimeRecyclerView = (RecyclerView) view.findViewById(R.id.crime_recycler_view);
         crimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        noCrimeTextView = (TextView) view.findViewById(R.id.no_crime_text_view);
 
         updateUi();
 
@@ -205,12 +208,23 @@ public class CrimeListFragment extends Fragment {
     }
 
     private void updateUi() {
+        List<CrimeRecord> crimeRecordList = crimeLab.getCrimeRecordList();
+
+        if (crimeRecordList.isEmpty()) {
+            noCrimeTextView.setVisibility(View.VISIBLE);
+            crimeRecyclerView.setVisibility(View.GONE);
+        } else {
+            noCrimeTextView.setVisibility(View.GONE);
+            crimeRecyclerView.setVisibility(View.VISIBLE);
+        }
+
         if (crimeAdapter == null) {
-            crimeAdapter = new CrimeAdapter(crimeLab.getCrimeRecordList());
+            crimeAdapter = new CrimeAdapter(crimeRecordList);
         } else {
             crimeAdapter.notifyDataSetChanged();
         }
         crimeRecyclerView.setAdapter(crimeAdapter);
+
         updateSubtitle();
     }
 
