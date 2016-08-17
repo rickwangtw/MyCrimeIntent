@@ -127,13 +127,18 @@ public class SqliteOpenHelperCrimeRecordDao extends SQLiteOpenHelper implements 
         getWritableDatabase().update(
                 CrimeDbSchema.CrimeTable.NAME,
                 values,
-                CrimeDbSchema.CrimeTable.Column.UUID + " = ?", new String[] { uuidString }
+                CrimeDbSchema.CrimeTable.Column.UUID + " = ?",
+                new String[] { uuidString }
         );
     }
 
     @Override
     public void deleteCrimeRecord(UUID crimeId) {
-        // TODO
+        getWritableDatabase().delete(
+                CrimeDbSchema.CrimeTable.NAME,
+                CrimeDbSchema.CrimeTable.Column.UUID + " = ?",
+                new String[] { crimeId.toString() }
+        );
     }
 
     private static ContentValues getContentValues(CrimeRecord crimeRecord) {
