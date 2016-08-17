@@ -2,6 +2,7 @@ package com.mysticwind.android.bignerdranch.training.mycrimeintent.manager;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,5 +29,17 @@ public class CrimeLab {
 
     public void addCrimeRecord(CrimeRecord crimeRecord) {
         crimeRecordList.add(crimeRecord);
+    }
+
+    public void deleteCrimeRecord(UUID id) {
+        Iterator<CrimeRecord> crimeRecordIterator = crimeRecordList.iterator();
+
+        while (crimeRecordIterator.hasNext()) {
+            CrimeRecord crimeRecord = crimeRecordIterator.next();
+            if (crimeRecord.getId().equals(id)) {
+                crimeRecordIterator.remove();
+                return;
+            }
+        }
     }
 }
