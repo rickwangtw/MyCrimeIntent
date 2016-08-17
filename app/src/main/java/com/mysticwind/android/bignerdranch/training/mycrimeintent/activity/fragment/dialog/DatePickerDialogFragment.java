@@ -1,15 +1,14 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.dialog;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
@@ -33,10 +32,12 @@ public class DatePickerDialogFragment extends DialogFragment {
         return fragment;
     }
 
-    @NonNull
+    @Nullable
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        super.onCreateDialog(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
 
         final Date date = (Date) getArguments().getSerializable(DATE_ARGUMENT_KEY);
         Calendar calendar = Calendar.getInstance();
@@ -50,20 +51,19 @@ public class DatePickerDialogFragment extends DialogFragment {
         datePicker = (DatePicker) view.findViewById(R.id.dialog_date_picker);
         datePicker.init(year, month, day, null);
 
-        return new AlertDialog.Builder(getActivity())
-                .setView(view)
-                .setTitle(R.string.date_picker_title)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int which) {
-                        int year = datePicker.getYear();
-                        int month = datePicker.getMonth();
-                        int day = datePicker.getDayOfMonth();
-                        Date date = new GregorianCalendar(year, month, day).getTime();
-                        sendResult(Activity.RESULT_OK, date);
-                    }
-                })
-                .create();
+        final Button confirmButton = (Button) view.findViewById(R.id.dialog_date_picker_confirm_button);
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int year = datePicker.getYear();
+                int month = datePicker.getMonth();
+                int day = datePicker.getDayOfMonth();
+                Date date = new GregorianCalendar(year, month, day).getTime();
+                sendResult(Activity.RESULT_OK, date);
+                DatePickerDialogFragment.this.dismiss();
+            }
+        });
+        return view;
     }
 
     private void sendResult(int resultCode, Date selectedDate) {
