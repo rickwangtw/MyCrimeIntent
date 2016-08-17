@@ -60,19 +60,31 @@ public class DatePickerDialogFragment extends DialogFragment {
                 int day = datePicker.getDayOfMonth();
                 Date date = new GregorianCalendar(year, month, day).getTime();
                 sendResult(Activity.RESULT_OK, date);
-                DatePickerDialogFragment.this.dismiss();
+                dismissDatePicker();
             }
         });
         return view;
     }
 
-    private void sendResult(int resultCode, Date selectedDate) {
-        if (getTargetFragment() == null) {
-            return;
+    private void dismissDatePicker() {
+        if (getTargetFragment() != null) {
+            // this is launched as part of a fragment
+            DatePickerDialogFragment.this.dismiss();
+        } else {
+            // this is launched as an activity
+            // TODO can we not do this hack here?
+            getActivity().finish();
         }
+    }
+
+    private void sendResult(int resultCode, Date selectedDate) {
         Intent intent = new Intent();
         intent.putExtra(DATE_EXTRA_KEY, selectedDate);
-        getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+        if (getTargetFragment() != null) {
+            getTargetFragment().onActivityResult(getTargetRequestCode(), resultCode, intent);
+        } else {
+            getActivity().setResult(Activity.RESULT_OK, intent);
+        }
     }
 
     public static Date extractDate(Intent data) {

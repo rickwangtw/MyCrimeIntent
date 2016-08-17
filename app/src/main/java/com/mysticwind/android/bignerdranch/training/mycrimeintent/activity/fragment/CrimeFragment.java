@@ -130,10 +130,15 @@ public class CrimeFragment extends Fragment {
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager manager = getFragmentManager();
-                DatePickerDialogFragment dialog = DatePickerDialogFragment.newInstance(crimeRecord.getDateTime());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE_CODE);
-                dialog.show(manager, DATE_PICKER_DIALOG_TAG);
+                if (isTablet()) {
+                    FragmentManager manager = getFragmentManager();
+                    DatePickerDialogFragment dialog = DatePickerDialogFragment.newInstance(crimeRecord.getDateTime());
+                    dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE_CODE);
+                    dialog.show(manager, DATE_PICKER_DIALOG_TAG);
+                } else {
+                    Intent intent = DatePickerActivity.newLaunchIntent(getActivity(), crimeRecord.getDateTime());
+                    startActivityForResult(intent, REQUEST_DATE_CODE);
+                }
                 setCrimeChanged();
             } });
 
@@ -161,6 +166,11 @@ public class CrimeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    // TODO put this in DI
+    private boolean isTablet() {
+        return getResources().getBoolean(R.bool.isTablet);
     }
 
     @Override
