@@ -24,6 +24,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.dialog.DatePickerDialogFragment;
@@ -55,6 +57,8 @@ public class CrimeFragment extends Fragment {
     CrimeLab crimeLab;
 
     private EditText crimeTitleEditText;
+    private ImageView photoView;
+    private ImageButton cameraCaptureButton;
     private Button dateButton;
     private Button timeButton;
     private CheckBox checkBox;
@@ -153,6 +157,9 @@ public class CrimeFragment extends Fragment {
             public void afterTextChanged(Editable editable) {
             }
         });
+
+        photoView = (ImageView)  view.findViewById(R.id.crime_photo_view);
+        cameraCaptureButton = (ImageButton) view.findViewById(R.id.crime_camera_capture_button);
 
         dateButton = (Button) view.findViewById(R.id.crime_date);
         updateDate(crimeRecord.getDateTime());
