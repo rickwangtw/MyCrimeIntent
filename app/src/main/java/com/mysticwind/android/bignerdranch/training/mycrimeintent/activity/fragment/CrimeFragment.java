@@ -6,7 +6,9 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,6 +37,7 @@ import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeL
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.Time;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
@@ -50,8 +53,10 @@ public class CrimeFragment extends Fragment {
     public static final int REQUEST_DATE_CODE = 0xFF01;
     public static final int REQUEST_TIME_CODE = 0xFF02;
     public static final int REQUEST_CONTACT_CODE = 0xFF03;
+    public static final int REQUEST_PHOTO_CODE = 0xFF04;
 
     private static final Intent PICK_CONTACT_INTENT = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+    private static final Intent CAPTURE_IMAGE_INTENT = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
     @Inject
     CrimeLab crimeLab;
@@ -66,6 +71,7 @@ public class CrimeFragment extends Fragment {
     private CrimeRecord crimeRecord;
     private Button suspectButton;
     private Button reportButton;
+    private File photoFile;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -160,6 +166,14 @@ public class CrimeFragment extends Fragment {
 
         photoView = (ImageView)  view.findViewById(R.id.crime_photo_view);
         cameraCaptureButton = (ImageButton) view.findViewById(R.id.crime_camera_capture_button);
+        cameraCaptureButton.setEnabled(canTakePhoto());
+        cameraCaptureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CAPTURE_IMAGE_INTENT.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(getPhotoFile()));
+                startActivityForResult(CAPTURE_IMAGE_INTENT, REQUEST_PHOTO_CODE);
+            }
+        });
 
         dateButton = (Button) view.findViewById(R.id.crime_date);
         updateDate(crimeRecord.getDateTime());
@@ -232,6 +246,11 @@ public class CrimeFragment extends Fragment {
         return view;
     }
 
+    private boolean canTakePhoto() {
+        return getPhotoFile() != null &&
+                CAPTURE_IMAGE_INTENT.resolveActivity(getActivity().getPackageManager()) != null;
+    }
+
     @Override
     public void onPause() {
         super.onPause();
@@ -298,5 +317,17 @@ public class CrimeFragment extends Fragment {
         String report = getString(R.string.crime_report,
                 crimeRecord.getTitle(), dateString, solvedString, suspect);
         return report;
+    }
+
+    public File getPhotoFile() {
+        File externalFilesDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        if (externalFilesDir == null) {
+            return null;
+        }
+        return new File(externalFilesDir, getPhotoFileName());
+    }
+
+    public String getPhotoFileName() {
+        return "IMG_" + crimeRecord.getId().toString() + ".jpg";
     }
 }
