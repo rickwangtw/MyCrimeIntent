@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -33,6 +34,7 @@ import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.dialog.DatePickerDialogFragment;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.dialog.TimePickerDialogFragment;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.CrimeIntentApplication;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.common.PictureUtils;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.Time;
@@ -71,7 +73,6 @@ public class CrimeFragment extends Fragment {
     private CrimeRecord crimeRecord;
     private Button suspectButton;
     private Button reportButton;
-    private File photoFile;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -116,6 +117,8 @@ public class CrimeFragment extends Fragment {
             } finally {
                 c.close();
             }
+        } else if (requestCode == REQUEST_PHOTO_CODE) {
+            updatePhotoView();
         }
     }
 
@@ -164,7 +167,9 @@ public class CrimeFragment extends Fragment {
             }
         });
 
-        photoView = (ImageView)  view.findViewById(R.id.crime_photo_view);
+        photoView = (ImageView) view.findViewById(R.id.crime_photo_view);
+        updatePhotoView();
+
         cameraCaptureButton = (ImageButton) view.findViewById(R.id.crime_camera_capture_button);
         cameraCaptureButton.setEnabled(canTakePhoto());
         cameraCaptureButton.setOnClickListener(new View.OnClickListener() {
@@ -319,7 +324,7 @@ public class CrimeFragment extends Fragment {
         return report;
     }
 
-    public File getPhotoFile() {
+    private File getPhotoFile() {
         File externalFilesDir = getActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         if (externalFilesDir == null) {
             return null;
@@ -327,7 +332,17 @@ public class CrimeFragment extends Fragment {
         return new File(externalFilesDir, getPhotoFileName());
     }
 
-    public String getPhotoFileName() {
+    private String getPhotoFileName() {
         return "IMG_" + crimeRecord.getId().toString() + ".jpg";
+    }
+
+    private void updatePhotoView() {
+        File photoFile = getPhotoFile();
+        if (photoFile == null || !photoFile.exists()) {
+            photoView.setImageDrawable(null);
+        } else {
+            Bitmap bitmap = PictureUtils.getScaledBitmap(photoFile.getPath(), getActivity());
+            photoView.setImageBitmap(bitmap);
+        }
     }
 }
