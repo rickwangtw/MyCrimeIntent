@@ -14,13 +14,16 @@ public class CrimeRecordDto {
     private long timestamp;
     @NotNull
     private boolean solved;
+    private String suspect;
 
-    @Generated(hash = 510694930)
-    public CrimeRecordDto(String id, String title, long timestamp, boolean solved) {
+    @Generated(hash = 1952728284)
+    public CrimeRecordDto(String id, String title, long timestamp, boolean solved,
+            String suspect) {
         this.id = id;
         this.title = title;
         this.timestamp = timestamp;
         this.solved = solved;
+        this.suspect = suspect;
     }
 
     @Generated(hash = 163280153)
@@ -61,5 +64,13 @@ public class CrimeRecordDto {
 
     public boolean getSolved() {
         return this.solved;
+    }
+
+    public String getSuspect() {
+        return suspect;
+    }
+
+    public void setSuspect(String suspect) {
+        this.suspect = suspect;
     }
 }

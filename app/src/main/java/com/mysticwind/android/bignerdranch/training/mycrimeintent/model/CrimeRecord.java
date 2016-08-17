@@ -11,9 +11,10 @@ public class CrimeRecord {
     // TODO use Joda or JSR-310
     private Date dateTime;
     private boolean solved;
+    private String suspect;
 
     public CrimeRecord() {
-        this(null);
+        this("");
     }
 
     public CrimeRecord(String title) {
@@ -64,5 +65,13 @@ public class CrimeRecord {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         this.dateTime = calendar.getTime();
+    }
+
+    public String getSuspect() {
+        return suspect;
+    }
+
+    public void setSuspect(String suspect) {
+        this.suspect = suspect;
     }
 }
