@@ -168,6 +168,13 @@ public class CrimeFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        crimeLab.updateCrimeRecord(crimeRecord);
+    }
+
     // TODO put this in DI
     private boolean isTablet() {
         return getResources().getBoolean(R.bool.isTablet);

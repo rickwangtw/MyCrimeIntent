@@ -6,7 +6,6 @@ import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRec
 import java.util.List;
 import java.util.UUID;
 
-// TODO add update crime record API and not rely on model changes
 public class CrimeLab {
 
     private final CrimeRecordDao crimeRecordDao;
@@ -29,5 +28,9 @@ public class CrimeLab {
 
     public void deleteCrimeRecord(UUID id) {
         crimeRecordDao.deleteCrimeRecord(id);
+    }
+
+    public void updateCrimeRecord(CrimeRecord crimeRecord) {
+        crimeRecordDao.updateCrimeRecord(crimeRecord);
     }
 }

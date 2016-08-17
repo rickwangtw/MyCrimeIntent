@@ -102,6 +102,10 @@ public class CrimeListFragment extends Fragment {
             }
             return -1;
         }
+
+        public void updateCrimeRecords(List<CrimeRecord> crimeRecordList) {
+            this.crimeRecords = crimeRecordList;
+        }
     }
 
     @Inject
@@ -221,6 +225,7 @@ public class CrimeListFragment extends Fragment {
         if (crimeAdapter == null) {
             crimeAdapter = new CrimeAdapter(crimeRecordList);
         } else {
+            crimeAdapter.updateCrimeRecords(crimeRecordList);
             crimeAdapter.notifyDataSetChanged();
         }
         crimeRecyclerView.setAdapter(crimeAdapter);

@@ -17,11 +17,16 @@ public class CrimeRecord {
     }
 
     public CrimeRecord(String title) {
-        this.id = UUID.randomUUID();
-        this.title = title;
-        this.dateTime = new Date();
-        this.solved = false;
+        this(UUID.randomUUID(), title, new Date(), false);
     }
+
+    public CrimeRecord(UUID id, String title, Date dateTime, boolean solved) {
+        this.id = id;
+        this.title = title;
+        this.dateTime = dateTime;
+        this.solved = solved;
+    }
+
 
     public UUID getId() {
         return id;

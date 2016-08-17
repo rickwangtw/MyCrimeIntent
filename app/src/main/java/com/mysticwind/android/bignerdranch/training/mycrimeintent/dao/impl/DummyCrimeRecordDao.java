@@ -40,6 +40,10 @@ public class DummyCrimeRecordDao implements CrimeRecordDao {
         if (persistedCrimeRecord == null) {
             throw new IllegalStateException("No crime record found for crime ID: " + crimeRecord.getId());
         }
+        if (persistedCrimeRecord == crimeRecord) {
+            // those are the same object
+            return;
+        }
         // update the persisted record so that we don't have to move the list items
         persistedCrimeRecord.setTitle(crimeRecord.getTitle());
         persistedCrimeRecord.updateDateTime(crimeRecord.getDateTime());
