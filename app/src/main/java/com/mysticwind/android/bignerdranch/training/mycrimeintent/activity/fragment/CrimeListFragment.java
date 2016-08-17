@@ -22,6 +22,7 @@ import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.Cr
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.model.CrimeRecord;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.UUID;
 
@@ -219,7 +220,7 @@ public class CrimeListFragment extends Fragment {
             subtitle = null;
         } else {
             int crimeCount = crimeLab.getCrimeRecordList().size();
-            subtitle = getString(R.string.subtitle_format, crimeCount);
+            subtitle = MessageFormat.format(getString(R.string.numberOfCrimes), crimeCount);
         }
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.getSupportActionBar().setSubtitle(subtitle);

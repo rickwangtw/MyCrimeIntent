@@ -6,10 +6,17 @@
     <string name="crime_solved_label">Solved</string>
     <string name="date_picker_title">Date of Crime</string>
 
+    <string name="numberOfCrimes">{0,choice,0#No crimes|1#One crime|1&lt;{0} crimes}</string>
+    <!-- this is not working ...
+    <plurals name="numberOfCrimes">
+        <item quantity="one">%d crime</item>
+        <item quantity="other">%d crimes</item>
+    </plurals>
+    -->
+
     <!-- MENU -->
     <string name="new_crime">New Crime</string>
     <string name="show_subtitle">Show Subtitle</string>
     <string name="hide_subtitle">Hide Subtitle</string>
-    <string name="subtitle_format">%1$d crimes</string>
     <string name="delete_crime">Delete Crime</string>
 </resources>
