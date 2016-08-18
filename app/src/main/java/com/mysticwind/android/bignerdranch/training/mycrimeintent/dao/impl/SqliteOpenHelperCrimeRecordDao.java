@@ -30,6 +30,7 @@ public class SqliteOpenHelperCrimeRecordDao extends SQLiteOpenHelper implements 
                 public static final String TITLE = "title";
                 public static final String DATE = "date";
                 public static final String SOLVED = "solved";
+                public static final String SUSPECT = "suspect";
             }
         }
     }
@@ -44,7 +45,8 @@ public class SqliteOpenHelperCrimeRecordDao extends SQLiteOpenHelper implements 
             String title = getString(getColumnIndex(CrimeDbSchema.CrimeTable.Column.TITLE));
             long timestamp = getLong(getColumnIndex(CrimeDbSchema.CrimeTable.Column.DATE));
             int isSolved = getInt(getColumnIndex(CrimeDbSchema.CrimeTable.Column.SOLVED));
-            return new CrimeRecord(UUID.fromString(uuidString), title, new Date(timestamp), isSolved != 0);
+            String suspect = getString(getColumnIndex(CrimeDbSchema.CrimeTable.Column.SUSPECT));
+            return new CrimeRecord(UUID.fromString(uuidString), title, new Date(timestamp), isSolved != 0, suspect);
         }
     }
 
@@ -59,7 +61,8 @@ public class SqliteOpenHelperCrimeRecordDao extends SQLiteOpenHelper implements 
                 CrimeDbSchema.CrimeTable.Column.UUID + ", " +
                 CrimeDbSchema.CrimeTable.Column.TITLE + ", " +
                 CrimeDbSchema.CrimeTable.Column.DATE + ", " +
-                CrimeDbSchema.CrimeTable.Column.SOLVED +
+                CrimeDbSchema.CrimeTable.Column.SOLVED + ", " +
+                CrimeDbSchema.CrimeTable.Column.SUSPECT +
                 ")");
     }
 
@@ -147,6 +150,7 @@ public class SqliteOpenHelperCrimeRecordDao extends SQLiteOpenHelper implements 
         values.put(CrimeDbSchema.CrimeTable.Column.TITLE, crimeRecord.getTitle());
         values.put(CrimeDbSchema.CrimeTable.Column.DATE, crimeRecord.getDateTime().getTime());
         values.put(CrimeDbSchema.CrimeTable.Column.SOLVED, crimeRecord.isSolved() ? 1 : 0);
+        values.put(CrimeDbSchema.CrimeTable.Column.SUSPECT, crimeRecord.getSuspect());
         return values;
     }
 }

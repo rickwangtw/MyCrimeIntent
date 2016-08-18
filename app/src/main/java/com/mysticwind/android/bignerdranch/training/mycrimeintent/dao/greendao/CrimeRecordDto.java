@@ -17,8 +17,11 @@ public class CrimeRecordDto {
     private String suspect;
 
     @Generated(hash = 1952728284)
-    public CrimeRecordDto(String id, String title, long timestamp, boolean solved,
-            String suspect) {
+    public CrimeRecordDto(String id,
+                          String title,
+                          long timestamp,
+                          boolean solved,
+                          String suspect) {
         this.id = id;
         this.title = title;
         this.timestamp = timestamp;

@@ -239,9 +239,6 @@ public class CrimeFragment extends Fragment {
         });
 
         suspectButton = (Button) view.findViewById(R.id.crime_suspect_button);
-        if (crimeRecord.getSuspect() != null) {
-            suspectButton.setText(crimeRecord.getSuspect());
-        }
         suspectButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -56,7 +56,8 @@ public class GreenDaoCrimeRecordDao implements CrimeRecordDao {
                 UUID.fromString(crime.getId()),
                 crime.getTitle(),
                 new Date(crime.getTimestamp()),
-                crime.isSolved());
+                crime.isSolved(),
+                crime.getSuspect());
     }
 
     private CrimeRecordDto convert(CrimeRecord crimeRecord) {
@@ -65,6 +66,7 @@ public class GreenDaoCrimeRecordDao implements CrimeRecordDao {
         crime.setTitle(crimeRecord.getTitle());
         crime.setTimestamp(crimeRecord.getDateTime().getTime());
         crime.setSolved(crimeRecord.isSolved());
+        crime.setSuspect(crimeRecord.getSuspect());
         return crime;
     }
 

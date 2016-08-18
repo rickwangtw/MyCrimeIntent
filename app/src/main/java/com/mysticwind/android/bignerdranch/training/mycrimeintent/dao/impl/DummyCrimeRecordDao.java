@@ -48,6 +48,7 @@ public class DummyCrimeRecordDao implements CrimeRecordDao {
         persistedCrimeRecord.setTitle(crimeRecord.getTitle());
         persistedCrimeRecord.updateDateTime(crimeRecord.getDateTime());
         persistedCrimeRecord.setSolved(crimeRecord.isSolved());
+        persistedCrimeRecord.setSuspect(crimeRecord.getSuspect());
     }
 
     @Override

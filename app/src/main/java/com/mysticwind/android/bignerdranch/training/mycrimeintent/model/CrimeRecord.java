@@ -18,14 +18,15 @@ public class CrimeRecord {
     }
 
     public CrimeRecord(String title) {
-        this(UUID.randomUUID(), title, new Date(), false);
+        this(UUID.randomUUID(), title, new Date(), false, null);
     }
 
-    public CrimeRecord(UUID id, String title, Date dateTime, boolean solved) {
+    public CrimeRecord(UUID id, String title, Date dateTime, boolean solved, String suspect) {
         this.id = id;
         this.title = title;
         this.dateTime = dateTime;
         this.solved = solved;
+        this.suspect = suspect;
     }
 
 
