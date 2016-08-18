@@ -10,7 +10,8 @@ import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragm
 
 import java.util.UUID;
 
-public class CrimeListActivity extends SingleFragmentActivity implements CrimeListFragment.Callbacks {
+public class CrimeListActivity extends SingleFragmentActivity
+        implements CrimeListFragment.Callbacks, CrimeFragment.Callbacks {
 
     @Override
     protected int getLayoutResourceId() {
@@ -32,6 +33,14 @@ public class CrimeListActivity extends SingleFragmentActivity implements CrimeLi
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.detail_fragment_container, crimeFragment)
                     .commit();
+        }
+    }
+
+    @Override
+    public void onCrimeUpdated(UUID crimeId) {
+        CrimeListFragment listFragment = (CrimeListFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (listFragment != null) {
+            listFragment.updateUi();
         }
     }
 }

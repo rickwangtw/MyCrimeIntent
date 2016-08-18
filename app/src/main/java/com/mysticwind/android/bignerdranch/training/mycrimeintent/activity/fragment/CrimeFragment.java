@@ -1,6 +1,7 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -60,6 +61,10 @@ public class CrimeFragment extends Fragment {
     private static final Intent PICK_CONTACT_INTENT = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
     private static final Intent CAPTURE_IMAGE_INTENT = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+    public interface Callbacks {
+        void onCrimeUpdated(UUID crimeId);
+    }
+
     @Inject
     CrimeLab crimeLab;
 
@@ -73,6 +78,8 @@ public class CrimeFragment extends Fragment {
     private CrimeRecord crimeRecord;
     private Button suspectButton;
     private Button reportButton;
+
+    private Callbacks callback;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -93,12 +100,10 @@ public class CrimeFragment extends Fragment {
 
         if (requestCode == REQUEST_DATE_CODE) {
             Date date = DatePickerDialogFragment.extractDate(data);
-            crimeRecord.updateDateTime(date);
             updateDate(date);
         } else if (requestCode == REQUEST_TIME_CODE) {
             Time time = TimePickerDialogFragment.extractTime(data);
-            crimeRecord.updateDateTime(time);
-            updateTime(crimeRecord.getDateTime());
+            updateTime(time);
         } else if (requestCode == REQUEST_CONTACT_CODE && data != null) {
             Uri contactUri = data.getData();
             String[] queryFields = new String[] {
@@ -112,8 +117,7 @@ public class CrimeFragment extends Fragment {
                 }
                 c.moveToFirst();
                 String suspect = c.getString(0);
-                crimeRecord.setSuspect(suspect);
-                suspectButton.setText(suspect);
+                updateSuspect(suspect);
             } finally {
                 c.close();
             }
@@ -123,16 +127,19 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof CrimeFragment.Callbacks) {
+            callback = (Callbacks) context;
+        }
+    }
+
+    @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-    }
-
-    private void updateDate(Date date) {
-        // Wednesday, Jul 22, 2015
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, MMM dd, yyyy");
-        dateButton.setText(simpleDateFormat.format(date));
     }
 
     @Nullable
@@ -158,8 +165,7 @@ public class CrimeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
-                crimeRecord.setTitle(charSequence.toString());
-                setCrimeChanged();
+                updateTitle(charSequence.toString());
             }
 
             @Override
@@ -181,7 +187,7 @@ public class CrimeFragment extends Fragment {
         });
 
         dateButton = (Button) view.findViewById(R.id.crime_date);
-        updateDate(crimeRecord.getDateTime());
+        updateDateDisplay(crimeRecord.getDateTime());
         dateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,11 +200,10 @@ public class CrimeFragment extends Fragment {
                     Intent intent = DatePickerActivity.newLaunchIntent(getActivity(), crimeRecord.getDateTime());
                     startActivityForResult(intent, REQUEST_DATE_CODE);
                 }
-                setCrimeChanged();
             } });
 
         timeButton = (Button) view.findViewById(R.id.crime_time);
-        updateTime(crimeRecord.getDateTime());
+        updateTimeDisplay(crimeRecord.getDateTime());
         timeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -206,7 +211,6 @@ public class CrimeFragment extends Fragment {
                 TimePickerDialogFragment dialog = TimePickerDialogFragment.newInstance(crimeRecord.getDateTime());
                 dialog.setTargetFragment(CrimeFragment.this, REQUEST_TIME_CODE);
                 dialog.show(fragmentManager, TIME_PICKER_DIALOG_TAG);
-                setCrimeChanged();
             }
         });
 
@@ -215,8 +219,7 @@ public class CrimeFragment extends Fragment {
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
-                crimeRecord.setSolved(isChecked);
-                setCrimeChanged();
+                updateSolved(isChecked);
             }
         });
 
@@ -263,6 +266,13 @@ public class CrimeFragment extends Fragment {
         crimeLab.updateCrimeRecord(crimeRecord);
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+
+        callback = null;
+    }
+
     // TODO put this in DI
     private boolean isTablet() {
         return getResources().getBoolean(R.bool.isTablet);
@@ -280,24 +290,10 @@ public class CrimeFragment extends Fragment {
         switch (item.getItemId()) {
             case R.id.menu_item_delete_crime:
                 crimeLab.deleteCrimeRecord(crimeRecord.getId());
-                setCrimeChanged();
                 getActivity().finish();
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    private void updateTime(Date dateTime) {
-        timeButton.setText(
-                String.format("%02d:%02d",
-                        dateTime.getHours(),
-                        dateTime.getMinutes()));
-    }
-
-    private void setCrimeChanged() {
-        Intent data = new Intent();
-        data.putExtra(CRIME_ID_EXTRA_KEY, crimeRecord.getId());
-        getActivity().setResult(Activity.RESULT_OK, data);
     }
 
     public static UUID extractCrimeId(Intent data) {
@@ -345,4 +341,83 @@ public class CrimeFragment extends Fragment {
             photoView.setImageBitmap(bitmap);
         }
     }
+
+    private void updateTitle(String updatedTitle) {
+        crimeRecord.setTitle(updatedTitle);
+        crimeLab.updateCrimeRecord(crimeRecord);
+        setCrimeChanged();
+
+        updateTitleDisplay(updatedTitle);
+    }
+
+    private void updateTitleDisplay(String updatedTitle) {
+        if (crimeTitleEditText.getText().toString().equals(updatedTitle)) {
+            return;
+        }
+        crimeTitleEditText.setText(updatedTitle);
+    }
+
+    private void updateDate(Date date) {
+        crimeRecord.updateDate(date);
+        crimeLab.updateCrimeRecord(crimeRecord);
+        setCrimeChanged();
+
+        updateDateDisplay(date);
+    }
+
+    private void updateDateDisplay(Date date) {
+        // Wednesday, Jul 22, 2015
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("E, MMM dd, yyyy");
+        dateButton.setText(simpleDateFormat.format(date));
+    }
+
+    private void updateTime(Time time) {
+        crimeRecord.updateTime(time);
+        crimeLab.updateCrimeRecord(crimeRecord);
+        setCrimeChanged();
+
+        updateTimeDisplay(crimeRecord.getDateTime());
+    }
+
+    private void updateTimeDisplay(Date dateTime) {
+        timeButton.setText(
+                String.format("%02d:%02d",
+                        dateTime.getHours(),
+                        dateTime.getMinutes()));
+    }
+
+    private void updateSolved(boolean isSolved) {
+        crimeRecord.setSolved(isSolved);
+        crimeLab.updateCrimeRecord(crimeRecord);
+        setCrimeChanged();
+
+        updateSolvedDisplay(isSolved);
+    }
+
+    private void updateSolvedDisplay(boolean isSolved) {
+        if (checkBox.isChecked() == isSolved) {
+            return;
+        }
+        checkBox.setChecked(isSolved);
+    }
+
+    private void updateSuspect(String suspect) {
+        crimeRecord.setSuspect(suspect);
+        crimeLab.updateCrimeRecord(crimeRecord);
+        setCrimeChanged();
+
+        updateSuspectView(suspect);
+    }
+
+    private void updateSuspectView(String suspect) {
+        suspectButton.setText(suspect);
+    }
+
+    private void setCrimeChanged() {
+        if (callback != null) {
+            callback.onCrimeUpdated(crimeRecord.getId());
+        }
+    }
+
+
 }

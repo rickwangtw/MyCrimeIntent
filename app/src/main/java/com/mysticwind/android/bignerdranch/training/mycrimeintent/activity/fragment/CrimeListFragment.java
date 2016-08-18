@@ -237,7 +237,7 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
-    private void updateUi() {
+    public void updateUi() {
         List<CrimeRecord> crimeRecordList = crimeLab.getCrimeRecordList();
 
         if (crimeRecordList.isEmpty()) {
@@ -250,11 +250,11 @@ public class CrimeListFragment extends Fragment {
 
         if (crimeAdapter == null) {
             crimeAdapter = new CrimeAdapter(crimeRecordList);
+            crimeRecyclerView.setAdapter(crimeAdapter);
         } else {
             crimeAdapter.updateCrimeRecords(crimeRecordList);
             crimeAdapter.notifyDataSetChanged();
         }
-        crimeRecyclerView.setAdapter(crimeAdapter);
 
         updateSubtitle();
     }

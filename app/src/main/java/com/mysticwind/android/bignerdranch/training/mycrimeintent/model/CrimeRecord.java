@@ -53,11 +53,25 @@ public class CrimeRecord {
         this.solved = solved;
     }
 
-    public void updateDateTime(Date date) {
-        this.dateTime = date;
+    public void updateDateTime(Date dateTime) {
+        this.dateTime = dateTime;
     }
 
-    public void updateDateTime(Time time) {
+    public void updateDate(Date date) {
+        Time originalTime = getTime(this.dateTime);
+        this.dateTime = date;
+        updateTime(originalTime);
+    }
+
+    private Time getTime(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int originalHour = calendar.get(Calendar.HOUR_OF_DAY);
+        int originalMinute = calendar.get(Calendar.MINUTE);
+        return new Time(originalHour, originalMinute);
+    }
+
+    public void updateTime(Time time) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(this.dateTime);
         calendar.set(Calendar.HOUR_OF_DAY, time.getHour());
