@@ -34,6 +34,7 @@ import android.widget.ImageView;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.R;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.dialog.DatePickerDialogFragment;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.dialog.TimePickerDialogFragment;
+import com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment.dialog.ZoomedCrimePhotoDialogFragment;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.application.CrimeIntentApplication;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.common.PictureUtils;
 import com.mysticwind.android.bignerdranch.training.mycrimeintent.manager.CrimeLab;
@@ -53,6 +54,7 @@ public class CrimeFragment extends Fragment {
     private static final String CRIME_ID_EXTRA_KEY = "crimeId";
     private static final String DATE_PICKER_DIALOG_TAG = "datePickerDialog";
     private static final String TIME_PICKER_DIALOG_TAG = "timePickerDialog";
+    private static final String ZOOMED_CRIME_PHOTO_DIALOG_TAG = "zoomedCrimePhotoDialog";
     public static final int REQUEST_DATE_CODE = 0xFF01;
     public static final int REQUEST_TIME_CODE = 0xFF02;
     public static final int REQUEST_CONTACT_CODE = 0xFF03;
@@ -174,6 +176,16 @@ public class CrimeFragment extends Fragment {
         });
 
         photoView = (ImageView) view.findViewById(R.id.crime_photo_view);
+        photoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                File photoFile = getPhotoFile();
+                if (photoFile != null && photoFile.exists()) {
+                    ZoomedCrimePhotoDialogFragment fragment = ZoomedCrimePhotoDialogFragment.newInstance(photoFile.toURI());
+                    fragment.show(getFragmentManager(), ZOOMED_CRIME_PHOTO_DIALOG_TAG);
+                }
+            }
+        });
         updatePhotoView();
 
         cameraCaptureButton = (ImageButton) view.findViewById(R.id.crime_camera_capture_button);
