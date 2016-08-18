@@ -1,6 +1,7 @@
 package com.mysticwind.android.bignerdranch.training.mycrimeintent.activity.fragment;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -80,6 +81,7 @@ public class CrimeFragment extends Fragment {
 
     private CrimeRecord crimeRecord;
     private Button suspectButton;
+    private Button callCrimeSuspectButton;
     private Button reportButton;
 
     private Callbacks callback;
@@ -112,17 +114,17 @@ public class CrimeFragment extends Fragment {
             String[] queryFields = new String[] {
                     ContactsContract.Contacts.DISPLAY_NAME
             };
-            Cursor c = getActivity().getContentResolver()
+            Cursor cursor = getActivity().getContentResolver()
                     .query(contactUri, queryFields, null, null, null);
             try {
-                if (c.getCount() == 0) {
+                if (cursor.getCount() == 0) {
                     return;
                 }
-                c.moveToFirst();
-                String suspect = c.getString(0);
+                cursor.moveToFirst();
+                String suspect = cursor.getString(0);
                 updateSuspect(suspect);
             } finally {
-                c.close();
+                cursor.close();
             }
         } else if (requestCode == REQUEST_PHOTO_CODE) {
             updatePhotoView();
@@ -247,6 +249,10 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        callCrimeSuspectButton = (Button) view.findViewById(R.id.call_crime_suspect_button);
+
+        updateSuspectView(crimeRecord.getSuspect());
+
         PackageManager packageManager = getActivity().getPackageManager();
         if (packageManager.resolveActivity(PICK_CONTACT_INTENT, PackageManager.MATCH_DEFAULT_ONLY) == null) {
             suspectButton.setEnabled(false);
@@ -270,6 +276,52 @@ public class CrimeFragment extends Fragment {
     private boolean canTakePhoto() {
         return getPhotoFile() != null &&
                 CAPTURE_IMAGE_INTENT.resolveActivity(getActivity().getPackageManager()) != null;
+    }
+
+    private String getPhoneNumber(String name) {
+        String contactId = getContactId(name);
+        if (contactId == null || contactId.length() == 0) {
+            return null;
+        }
+        final ContentResolver resolver = getActivity().getContentResolver();
+        Cursor cursor = resolver.query(
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                new String[]{ ContactsContract.CommonDataKinds.Phone.NUMBER },
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                new String[]{ contactId },
+                null);
+        try {
+            if (cursor.getCount() == 0) {
+                return null;
+            }
+            cursor.moveToNext();
+
+            int phoneNumberIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            return cursor.getString(phoneNumberIndex);
+        } finally {
+            cursor.close();
+        }
+    }
+
+    private String getContactId(String name) {
+        final ContentResolver resolver = getActivity().getContentResolver();
+        Cursor cursor = resolver.query(
+                ContactsContract.Contacts.CONTENT_URI,
+                new String[]{ ContactsContract.Contacts._ID, ContactsContract.Contacts.DISPLAY_NAME },
+                ContactsContract.Contacts.DISPLAY_NAME + " = ?",
+                new String[]{ name },
+                null);
+        try {
+            if (cursor.getCount() == 0) {
+                return null;
+            }
+            cursor.moveToNext();
+
+            int idColumnIndex = cursor.getColumnIndex(ContactsContract.Contacts._ID);
+            return cursor.getString(idColumnIndex);
+        } finally {
+            cursor.close();
+        }
     }
 
     @Override
@@ -431,7 +483,26 @@ public class CrimeFragment extends Fragment {
     }
 
     private void updateSuspectView(String suspect) {
-        suspectButton.setText(suspect);
+        if (suspect == null || suspect.length() == 0) {
+            callCrimeSuspectButton.setEnabled(false);
+        } else {
+            suspectButton.setText(suspect);
+
+            final String phoneNumber = getPhoneNumber(suspect);
+            if (phoneNumber == null || phoneNumber.length() == 0) {
+                callCrimeSuspectButton.setEnabled(false);
+            } else {
+                callCrimeSuspectButton.setEnabled(true);
+                callCrimeSuspectButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final Intent callContactIntent = new Intent(Intent.ACTION_DIAL);
+                        callContactIntent.setData(Uri.parse("tel:" + phoneNumber));
+                        startActivity(callContactIntent);
+                    }
+                });
+            }
+        }
     }
 
     private void setCrimeChanged() {

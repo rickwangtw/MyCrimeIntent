@@ -32,4 +32,5 @@
     <string name="hide_subtitle">Hide Subtitle</string>
     <string name="delete_crime">Delete Crime</string>
     <string name="noCrimeMessage">There are no crimes</string>
+    <string name="call_crime_suspect_text">Call suspect</string>
 </resources>

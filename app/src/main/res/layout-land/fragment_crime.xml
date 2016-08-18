@@ -95,6 +95,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1" />
 
+        <Button android:id="@+id/call_crime_suspect_button"
+            android:text="@string/call_crime_suspect_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
         <Button
             android:id="@+id/crime_report_button"
             android:text="@string/crime_report_text"
